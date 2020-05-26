@@ -26,7 +26,6 @@ namespace Terraritone
 		{
 			if (!Main.dedServ) //won't initialize on server
 			{
-				Pathfinding.instance = new Pathfinding();
 				MenuUI = new MenuUI();
 				MenuUI.Activate();
 
@@ -37,12 +36,12 @@ namespace Terraritone
 
 		public override void Unload()
 		{
-			Pathfinding.instance = null;
+			PathMap.instance = null;
 		}
 
 		public override void PreSaveAndQuit()
 		{
-			Pathfinding.instance.grid = null; //memory leak deleted.
+			PathMap.instance = null; //memory leak deleted.
 		}
 
 		public override void UpdateUI(GameTime gameTime)

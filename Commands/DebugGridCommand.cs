@@ -20,7 +20,7 @@ namespace Terraritone.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            Pathfinding.instance.debugGrid = !Pathfinding.instance.debugGrid;
+            PathMap.instance.debugGrid = !PathMap.instance.debugGrid;
         }
     }
 }

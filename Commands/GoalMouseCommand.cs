@@ -23,15 +23,9 @@ namespace Terraritone.Commands
         {
             Point mouseCoords = Main.MouseWorld.ToTileCoordinates();
 
-            if (!Pathfinding.instance.grid.grid[mouseCoords.X+1, mouseCoords.Y+2].walkable)
-            {
-                Main.NewText("Tile is not walkable, set the goal to a walkable tile");
-            }
-            else
-            {
-                Pathfinding.instance.goal = mouseCoords.ToVector2();
-                Main.NewText("New goal: " + Pathfinding.instance.goal);
-            }
+            PathMap.instance.goal = mouseCoords.ToVector2();
+            PathMap.instance.Path.Clear();
+            Main.NewText("New goal: " + PathMap.instance.goal);
         }
     }
 }

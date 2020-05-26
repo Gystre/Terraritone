@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -14,7 +15,6 @@ namespace Terraritone.UI
     class MenuUI : UIState
     {
         public DraggablePanel panel;
-        public HoverImageButton button;
         public static bool Visible = true;
 
         public override void OnInitialize()
@@ -63,15 +63,20 @@ namespace Terraritone.UI
 
         private void PathButtonClicked(UIMouseEvent evt, UIElement listeningElement)
         {
-            if(Pathfinding.instance.goal.X == -1)
+            if (PathMap.instance.goal.X == -1)
             {
                 Main.NewText("Set a goal first");
             }
             else
             {
-                Main.NewText("Starting path to tile " + Pathfinding.instance.goal);
-                Pathfinding.instance.Start();
-                Main.NewText("Done!");
+                Main.NewText("Starting path to tile " + PathMap.instance.goal + " from " + Main.LocalPlayer.position.ToTileCoordinates());
+                var thread = new Thread(() =>
+                {
+                    PathMap.instance.FindPath();
+
+                });
+                thread.Start();
+                thread = null;
             }
         }
 

@@ -24,19 +24,13 @@ namespace Terraritone.Commands
             if (args.Length < 1 || args.Length > 2)
             {
                 Main.NewText("Please use 2 coordinates");
+                
                 throw new NotImplementedException();
             }
             else
             {
-                if(!Pathfinding.instance.grid.grid[int.Parse(args[0]), int.Parse(args[1])].walkable)
-                {
-                    Main.NewText("Tile is not walkable, set the goal to a walkable tile");
-                }
-                else
-                {
-                    Pathfinding.instance.goal = new Vector2(int.Parse(args[0]), int.Parse(args[1]));
-                    Main.NewText("New goal: " + Pathfinding.instance.goal);
-                }
+                PathMap.instance.goal = new Vector2(int.Parse(args[0]), int.Parse(args[1]));
+                Main.NewText("New goal: " + PathMap.instance.goal);
             }
         }
     }

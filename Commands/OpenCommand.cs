@@ -21,16 +21,15 @@ namespace Terraritone
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if(args[0] == "open")
+            if(args.Length != 1)
+            {
+                throw new NotImplementedException();
+            }else if (args[0] == "open")
             {
                 MenuUI.Visible = true;
             }else if(args[0] == "close")
             {
                 MenuUI.Visible = false;
-            }
-            else
-            {
-                throw new NotImplementedException();
             }
 
         }

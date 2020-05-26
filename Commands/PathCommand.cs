@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -18,15 +18,20 @@ namespace Terraritone.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (Pathfinding.instance.goal.X == -1)
+            if (PathMap.instance.goal.X == -1)
             {
                 Main.NewText("Set a goal first");
             }
             else
             {
-                Main.NewText("Starting path to tile " + Pathfinding.instance.goal);
-                Pathfinding.instance.Start();
-                Main.NewText("Done!");
+                Main.NewText("Starting path to tile " + PathMap.instance.goal + " from " + Main.LocalPlayer.position.ToTileCoordinates());
+                var thread = new Thread(() =>
+                {
+                    PathMap.instance.FindPath();
+
+                });
+                thread.Start();
+                thread = null;
             }
         }
     }
