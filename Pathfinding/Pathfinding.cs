@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using Terraria;
 
+/*
+ * TODO:
+ * potential improvements here,
+ *  1. remove tile type array (saves ~100mb of ram)
+ *  2. use Main.tile and calculate grid at runtime so can manipulate world without having to recalculate path
+ */
+
 public enum HeuristicFormula
 {
     Manhattan = 1,
@@ -516,7 +523,7 @@ public class Pathfinding
                         || fNodeTmp.JumpLength == 3 //add first jump up or first in air direction change
                         || (fNextNodeTmp.JumpLength != 0 && fNodeTmp.JumpLength == 0) //add landing node (node that has non-zero jump value becomes 0)
                         || (fNodeTmp.JumpLength == 0 && fPrevNodeTmp.JumpLength != 0) //next node is on ground while next one isn't (landing node)
-                                                                                      //node y-coordinate is higher than previous and next node in closed list (highest point of jump)
+                        //node y-coordinate is higher than previous and next node in closed list (highest point of jump)
                         || (fNode.Y > Close[Close.Count - 1].Y && fNode.Y > fNodeTmp.PY)
                         || (fNode.Y < Close[Close.Count - 1].Y && fNode.Y < fNodeTmp.PY)
                         //next to an obstacle and previous node isn't aligned with current one either horizontally or vertically (went around an obstacle)

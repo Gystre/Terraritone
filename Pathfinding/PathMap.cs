@@ -13,6 +13,8 @@ public enum TileType
     OneWay
 }
 
+//class that holds the instances of the Bot class, Pathfinding class, and tiles array
+//all calls from child classes should be done through this parent class
 public partial class PathMap
 {
     internal static PathMap instance;
@@ -21,13 +23,12 @@ public partial class PathMap
 
     public bool debugGrid;
 
-    //map's Position in world space. Bottom left corner
-    public Vector2 Position;
+    Bot MovementBot; //ok i couldn't think of anything better alright?
 
-    public Pathfinding Pathfinder;
+    Pathfinding Pathfinder;
 
     //two arrays for storing grid information:
-    //Grid = array for use by pathfinder, will be larger than tiles for faster accesses
+    //Grid = array that holds the weights for the nodes, size will be next power of two for faster accesses
     //tiles = readable, enum based array, exact size of map, not used by pathfinder
     //nodes that are fed to the pathfinder (0 = block, 1 = empty)
     public byte[,] Grid;
@@ -90,6 +91,31 @@ public partial class PathMap
 
         return (tiles[x, y] != TileType.Empty);
     }
+
+    //checks if there are any solid blocks between two given points
+    public bool AnySolidBlockInStripe(int x, int y0, int y1)
+    {
+        int startY, endY;
+
+        if(y0 >= y1)
+        {
+            startY = y0;
+            endY = y1;
+        }
+        else
+        {
+            startY = y1;
+            endY = y0;
+        }
+
+        for(int y = startY; y >= endY; --y) 
+        {
+            if (GetTile(x, y) == TileType.Block)
+                return true;
+        }
+
+        return false;
+    }
     #endregion
 
     public void InitPathFinder()
@@ -108,6 +134,11 @@ public partial class PathMap
         Pathfinder.SearchLimit = 10000;
         Pathfinder.DebugProgress = false;
         Pathfinder.DebugFoundPath = false;
+    }
+
+    public void UpdateMovementBot()
+    {
+        MovementBot.BotUpdate(); //b/c object oriented programming
     }
 
     public void SetTile(int x, int y, TileType type)
@@ -174,30 +205,31 @@ public partial class PathMap
     {
         Path.Clear();
 
-        //start at player's feet for now
-        Point lowerPoint = Main.LocalPlayer.position.ToTileCoordinates();
-        lowerPoint.Y += 2;
-
-        Main.NewText(Main.LocalPlayer.height);
-        Main.NewText(Main.LocalPlayer.width);
-
-
-        List<Point> container = Pathfinder.CalculatePath(lowerPoint,
+        List<Point> container = Pathfinder.CalculatePath(Helper.GetBottomLeftPoint(),
                                                 goal.ToPoint(),
-                                                2, 3, 6);
+                                                Helper.GetPlayerWidth(), Helper.GetPlayerHeight(), 6);
 
         if (container != null && container.Count > 1)
         {
             Main.NewText("Successfully found a path");
-            for(var i = container.Count - 1; i >= 0; --i)
+            for (var i = container.Count - 1; i >= 0; --i)
             {
                 Path.Add(container[i]);
             }
+            Main.NewText("Beginning movement...");
+            MovementBot.TappedOnTile(Path, goal.ToPoint());
         }
         else
         {
             Main.NewText("Couldn't find a path!");
         }
+    }
+
+    public void Stop()
+    {
+        Main.NewText("Stopping");
+        Path.Clear();
+        MovementBot.StopMoving();
     }
 
     public PathMap()
@@ -207,7 +239,6 @@ public partial class PathMap
         int width = Enumerable.Range(0, Main.tile.GetLength(0)).Count(i => Main.tile[i, 0] != null);
         int height = Enumerable.Range(0, Main.tile.GetLength(1)).Count(i => Main.tile[0, i] != null);
 
-        Position = new Vector2(0, 0);
         Width = width;
         Height = height;
 
@@ -217,7 +248,9 @@ public partial class PathMap
 
         InitPathFinder();
 
-        for(int y = 0; y < Height; ++y)
+        MovementBot = new Bot(Pathfinder);
+
+        for (int y = 0; y < Height; ++y)
         {
             for(int x = 0; x < Width; ++x)
             {

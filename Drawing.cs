@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using System.Diagnostics;
 
 namespace Terraritone
 {
@@ -56,8 +57,7 @@ namespace Terraritone
         {
             Vector2 edge = end - start;
             // calculate angle to rotate line
-            float angle =
-                (float)Math.Atan2(edge.Y, edge.X);
+            float angle = (float)Math.Atan2(edge.Y, edge.X);
 
 
             Main.spriteBatch.Draw(Main.magicPixel,

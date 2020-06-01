@@ -9,6 +9,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.GameContent.UI.Elements;
+using Terraria.GameInput;
+using System.Diagnostics;
 
 namespace Terraritone.UI
 {
@@ -17,14 +19,16 @@ namespace Terraritone.UI
         public DraggablePanel panel;
         public static bool Visible = true;
 
+        UIText debugMovements;
+
         public override void OnInitialize()
         {
             panel = new DraggablePanel();
             panel.SetPadding(0);
-            panel.Left.Set(400f, 0f); //width of gui
-            panel.Top.Set(200, 0f); //height of gui
+            panel.Left.Set(400f, 0f);
+            panel.Top.Set(200, 0f);
             panel.Width.Set(170f, 0f);
-            panel.Height.Set(70f, 0f);
+            panel.Height.Set(200, 0f);
             panel.BackgroundColor = new Color(73, 94, 171);
 
             UIText text = new UIText("Terraritone");
@@ -43,7 +47,16 @@ namespace Terraritone.UI
             pathButton.OnClick += new MouseEvent(PathButtonClicked);
             panel.Append(pathButton);
 
-            Texture2D buttonDeleteTexture = ModContent.GetTexture("Terraria/UI/ButtonDelete");
+            Texture2D buttonStopTexture = ModContent.GetTexture("Terraria/UI/ButtonDelete");
+            HoverImageButton stopButton = new HoverImageButton(buttonStopTexture, "Stop");
+            stopButton.Left.Set(35, 0);
+            stopButton.Top.Set(30, 0);
+            stopButton.Width.Set(22, 0f);
+            stopButton.Height.Set(22, 0f);
+            stopButton.OnClick += new MouseEvent(StopButtonClicked);
+            panel.Append(stopButton);
+
+            Texture2D buttonDeleteTexture = ModContent.GetTexture("Terraritone/UI/closeButton");
             HoverImageButton closeButton = new HoverImageButton(buttonDeleteTexture, Language.GetTextValue("LegacyInterface.52")); // Localized text for "Close"
             closeButton.Left.Set(140, 0f);
             closeButton.Top.Set(10, 0f);
@@ -51,6 +64,13 @@ namespace Terraritone.UI
             closeButton.Height.Set(22, 0f);
             closeButton.OnClick += new MouseEvent(CloseButtonClicked);
             panel.Append(closeButton);
+
+            debugMovements = new UIText("asdf");
+            debugMovements.Left.Set(10, 0);
+            debugMovements.Top.Set(50, 0);
+            debugMovements.Width.Set(100, 0);
+            debugMovements.Height.Set(500, 0);
+            panel.Append(debugMovements);
 
             Append(panel);
         }
@@ -80,5 +100,30 @@ namespace Terraritone.UI
             }
         }
 
+        private void StopButtonClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
+            if(PathMap.instance != null)
+            {
+                PathMap.instance.Stop();
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if(PlayerInput.Triggers != null)
+            {
+                string container = "";
+
+                container += "Left " + PlayerInput.Triggers.Current.Left + "\n";
+                container += "Right " + PlayerInput.Triggers.Current.Right + "\n";
+                container += "Down " + PlayerInput.Triggers.Current.Down + "\n";
+                container += "Jump " + PlayerInput.Triggers.Current.Jump + "\n";
+
+                debugMovements.SetText(container);
+            }
+
+            base.Draw(spriteBatch);
+
+        }
     }
 }

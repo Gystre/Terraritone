@@ -1,1 +1,3 @@
-Terraritone is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+Terraritone plays block game for lazy people
+
+(Any inspiration or references to the baritone project from the title name are completely coincidental)

@@ -13,13 +13,13 @@ namespace Terraritone
 {
     class TestPlayer : ModPlayer
     {
+
         public override void PreUpdate()
         {
-            //PlayerInput.Triggers.Current.Left = true;
-            //PlayerInput.Triggers.Current.Left = false;
-
-            //PlayerInput.Triggers.Current.Right = true;
-            //PlayerInput.Triggers.Current.Right = false;
+            if (PathMap.instance != null)
+            {
+                PathMap.instance.UpdateMovementBot();
+            }
         }
 
         public override void PostUpdate()
