@@ -123,7 +123,6 @@ class Bot
                 //new node is lower than the previous or it's on the ground, return number of frames of jump needed for the found height
                 if(Path[prevNodeId].Y - Path[i].Y < jumpHeight || PathMap.instance.IsGround(Path[i].X, Path[i].Y + 1))
                 {
-                    Main.NewText(jumpHeight);
                     return GetJumpFrameCount(jumpHeight);
                 }
             }
